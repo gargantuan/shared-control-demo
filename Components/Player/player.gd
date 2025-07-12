@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
+const ROTATION_SPEED = 10.0
 
 var move_vector := Vector3.ZERO
 
@@ -32,6 +33,12 @@ func _physics_process(delta: float) -> void:
 	if move_vector.length() > 0:
 		velocity.x = move_vector.x * SPEED
 		velocity.z = move_vector.z * SPEED
+		
+		# Rotate CharacterMesh to face movement direction
+		var direction = Vector3(move_vector.x, 0, move_vector.z).normalized()
+		if direction.length() > 0:
+			var target_rotation = atan2(-direction.z, direction.x)
+			%CharacterMesh.rotation.y = lerp_angle(%CharacterMesh.rotation.y, target_rotation, ROTATION_SPEED * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
